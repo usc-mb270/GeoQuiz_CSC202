@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.app.Activity;
 
 import org.w3c.dom.Text;
 
@@ -42,13 +43,14 @@ public class CheatActivity extends AppCompatActivity {
         mShowAnswerButton = (Button) findViewById(R.id.show_answer_button);
         mShowAnswerButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void OnClick(View v) {
+            public void onClick(View v) {
                 if (mAnswerIsTrue) {
                     mAnswerTextView.setText(R.string.true_button);
                 } else {
                     mAnswerTextView.setText(R.string.false_button);
                 }
-                setAnswerShownResult(true);
+
+            setAnswerShownResult(true);
             }
         });
     }

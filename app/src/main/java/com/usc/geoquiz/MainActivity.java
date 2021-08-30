@@ -2,6 +2,7 @@ package com.usc.geoquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,8 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +25,10 @@ public class MainActivity extends AppCompatActivity {
     private Button mPrevButton;
     private TextView mQuestionTextView;
 
+
+    private int mCurrentIndex = 0;
+    private boolean mIsCheater;
+
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_australia, true),
             new Question(R.string.question_oceans, true),
@@ -34,9 +37,6 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.question_africa, true),
             new Question(R.string.question_asia, true),
     };
-
-    private int mCurrentIndex = 0;
-    private boolean mIsCheater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,29 +73,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mNextButton = (Button) findViewById(R.string.next_button);
+        mNextButton = (Button) findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 mIsCheater = false;
                 updateQuestion();
             }
         });
 
-        mPrevButton = (Button) findViewById(R.string.prev_button);
+        mPrevButton = (Button) findViewById(R.id.prev_button);
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.length;
+                mIsCheater = false;
                 updateQuestion();
             }
         });
 
         mCheatButton = (Button) findViewById(R.id.cheat_button);
-        mCheatButton.setOnClickListener(new View.onClickListener() {
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                boolean answerIsTrue = mQuestionBank(mCurrentIndex).isAnswerTrue();
+            public void onClick(View v)  {
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
                 Intent intent = CheatActivity.newIntent(MainActivity.this, answerIsTrue);
                 startActivityForResult(intent, REQUEST_CODE_CHEAT);
             }
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
